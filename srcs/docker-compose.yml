@@ -1,0 +1,24 @@
+name: inception
+
+services:
+  mariadb:
+    env_file: ./.env
+    build:
+      context: ./requirements/mariadb
+      secrets:
+        - db_root_password
+        - db_password
+      args:
+        - MARIADB_DATABASE=${MARIADB_DATABASE}
+        - MARIADB_USER=${MARIADB_USER}
+    ports:
+      - "127.0.0.1:3306:3306"
+
+volumes:
+  wordpress-database:
+
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
