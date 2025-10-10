@@ -22,6 +22,30 @@ services:
         source: ${HOME}/data/wordpress-db
         target: /var/lib/mysql
 
+  wordpress:
+    depends_on:
+      - mariadb
+    env_file: ./.env
+    build:
+      context: ./requirements/wordpress
+      args:
+        - MARIADB_DATABASE=${MARIADB_DATABASE}
+        - MARIADB_USER=${MARIADB_USER}
+        - WORDPRESS_VERSION=${WORDPRESS_VERSION}
+        - WORDPRESS_SHA1=${WORDPRESS_SHA1}
+    ports:
+      - "127.0.0.1:9000:9000" # 9000 probably does not need to be exposed on the host (Dockerfile is already exposing it on Docker network?)
+    restart: on-failure
+    environment:
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MARIADB_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - type: bind
+        source: ${HOME}/data/wordpress-files
+        target: /var/www/html/
+
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
