@@ -5,9 +5,6 @@ services:
     env_file: ./.env
     build:
       context: ./requirements/mariadb
-      # secrets:
-      #   - db_root_password
-      #   - db_password
       args:
         - MARIADB_DATABASE=${MARIADB_DATABASE}
         - MARIADB_USER=${MARIADB_USER}
@@ -20,15 +17,10 @@ services:
     secrets:
       - db_root_password
       - db_password
-    # volumes:
-    #   - wordpress-database:/var/lib/mysqll
-
-# volumes:
-#   wordpress-database: # Should be a bind mount to /home/<login>/data folder of the host machine
-#     driver_opts:
-#       type: 'none'
-#       o: bind
-#       device: /home/ali/data/wordpress-db
+    volumes:
+      - type: bind
+        source: ${HOME}/data/wordpress-db
+        target: /var/lib/mysql
 
 secrets:
   db_root_password:

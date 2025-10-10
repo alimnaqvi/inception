@@ -1,11 +1,16 @@
 #!/bin/bash
 set -e # Exit immediately if a command exits with a non-zero status.
 
-# if /var/lib/mysql/wordpress directory does not exist, this is the first run
-if [ -d /var/lib/mysql/${MARIADB_DATABASE} ]; then
+DATADIR="/var/lib/mysql"
+
+# if /var/lib/mysql/wordpress-db directory does not exist, this is the first run
+if [ -d ${DATADIR}/${MARIADB_DATABASE} ]; then
     echo "Not the first run. Skipping initialization of MariaDB database."
 else
     echo "First run detected. Initializing MariaDB database."
+    echo "Running mariadb-install-db to initialize the MariaDB data directory (${DATADIR}) and create the system tables"
+    mariadb-install-db --user=mysql --datadir="${DATADIR}"
+    echo "Starting mariadb service"
     service mariadb start
 
     MARIADB_ROOT_PASSWORD=$(cat ${MARIADB_ROOT_PASSWORD_FILE})
@@ -29,29 +34,7 @@ else
         exit 1
     fi
 
-#     # Create a temporary SQL file
-#     temp_sql_file=$(mktemp)
-
-#     cat > "$temp_sql_file" <<-EOSQL
-#         -- Set root password
-#         ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
-
-#         -- Create the application database if it doesn't exist
-#         CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;
-
-#         -- Create the application user and grant privileges
-#         CREATE USER IF NOT EXISTS \`${MARIADB_USER}\`@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
-#         GRANT ALL PRIVILEGES ON \`${MARIADB_DATABASE}\`.* TO \`${MARIADB_USER}\`@'%';
-
-#         -- Apply the changes
-#         FLUSH PRIVILEGES;
-# EOSQL
-
-#     # Execute the SQL file
-#     mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" < "$temp_sql_file"
-
-#     # Clean up the temp file
-#     rm -f "$temp_sql_file"
+    echo "mariadb service successfully started."
 
     # Set root password
     mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';"
@@ -65,6 +48,8 @@ else
 
     # Apply the changes
     mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
+
+    echo "Shutting down the temporary mariadb server"
 
     # Shutdown the MariaDB server (entrypoint will start it again)
     mariadb-admin -u root -p"${MARIADB_ROOT_PASSWORD}" shutdown
