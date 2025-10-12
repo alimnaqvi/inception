@@ -8,8 +8,6 @@ services:
       args:
         - MARIADB_DATABASE=${MARIADB_DATABASE}
         - MARIADB_USER=${MARIADB_USER}
-    ports:
-      - "127.0.0.1:3306:3306" # 3306 probably does not need to be exposed on the host (Dockerfile is already exposing it on Docker network?)
     restart: on-failure
     environment:
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
@@ -21,6 +19,8 @@ services:
       - type: bind
         source: ${HOME}/data/wordpress-db
         target: /var/lib/mysql
+    networks:
+      - inception-network
 
   wordpress:
     depends_on:
@@ -33,8 +33,6 @@ services:
         - MARIADB_USER=${MARIADB_USER}
         - WORDPRESS_VERSION=${WORDPRESS_VERSION}
         - WORDPRESS_SHA1=${WORDPRESS_SHA1}
-    ports:
-      - "127.0.0.1:9000:9000" # 9000 probably does not need to be exposed on the host (Dockerfile is already exposing it on Docker network?)
     restart: on-failure
     environment:
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
@@ -45,9 +43,40 @@ services:
       - type: bind
         source: ${HOME}/data/wordpress-files
         target: /var/www/html/
+    networks:
+      - inception-network
+  
+  nginx:
+    depends_on:
+      - wordpress
+    build:
+      context: ./requirements/nginx
+    ports:
+      - "127.0.0.1:443:443"
+    restart: on-failure
+    environment:
+      SSL_CERTIFICATE_FILE: /run/secrets/ssl_certificate
+      SSL_PRIVATE_KEY_FILE: /run/secrets/ssl_private_key
+    secrets:
+      - ssl_certificate
+      - ssl_private_key
+    volumes:
+      - type: bind
+        source: ${HOME}/data/wordpress-files
+        target: /var/www/html/
+    networks:
+      - inception-network
 
 secrets:
   db_root_password:
     file: ../secrets/db_root_password.txt
   db_password:
     file: ../secrets/db_password.txt
+  ssl_certificate:
+    file: ../secrets/anaqvi.42.fr.crt
+  ssl_private_key:
+    file: ../secrets/anaqvi.42.fr.key
+
+networks:
+  inception-network:
+    driver: bridge

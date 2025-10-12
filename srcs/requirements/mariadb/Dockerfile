@@ -20,4 +20,4 @@ ENTRYPOINT ["mdb-initialization.sh"]
 
 EXPOSE 3306
 
-CMD ["mariadbd-safe"]
+CMD ["mariadbd", "--user=mysql", "--datadir=/var/lib/mysql"]

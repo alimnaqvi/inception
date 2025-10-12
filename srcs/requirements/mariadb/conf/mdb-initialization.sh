@@ -51,9 +51,13 @@ else
 
     echo "Shutting down the temporary mariadb server"
 
-    # Shutdown the MariaDB server (entrypoint will start it again)
+    # Shutdown the MariaDB server (CMD will start it again)
     mariadb-admin -u root -p"${MARIADB_ROOT_PASSWORD}" shutdown
 fi
+
+# Create and permission the socket directory for the mysql user
+mkdir -p /run/mysqld
+chown -R mysql:mysql /run/mysqld
 
 # Pass execution to the command specified in the Dockerfile's CMD
 # This allows the MariaDB server to run as the main process (PID 1)
