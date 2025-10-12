@@ -4,15 +4,18 @@ set -e
 ROOT_DIR="/var/www/html"
 WP_DOWNLOAD="/wordpress-download/wordpress.tar.gz"
 DB_SERVICE_NAME="mariadb"
+PHP_FPM_CONF_FILE_PATH="/etc/php/8.2/fpm/pool.d/www.conf"
 
-# Add logic to wait for MariaDB to be ready? (should be handled by depends_on in compose)
+cat_then_grep() {
+    cat $1 | grep $2
+}
 
 # Ensure php-fpm listens on port 9000
-if [ $(cat /etc/php/8.2/fpm/pool.d/www.conf | grep listen) == *"listen = 9000"* ]; then
+if [[ $(cat_then_grep ${PHP_FPM_CONF_FILE_PATH} "listen") == *"listen = 9000"* ]]; then
     echo "php-fpm configuration is already set to listen on port 9000."
 else
-    echo "php-fpm configuration is NOT set to listen on port 9000. Setting it now."
-    echo "listen = 9000" >> /etc/php/8.2/fpm/pool.d/www.conf
+    echo "Setting php-fpm configuration to listen on port 9000."
+    echo "listen = 9000" >> ${PHP_FPM_CONF_FILE_PATH}
 fi
 
 if [ -f ${ROOT_DIR}/wp-config.php ]; then

@@ -9,3 +9,4 @@ Almost all resources mentioned here are official documentation, which is always 
 - [Manual for Environment variables in Docker Compose](https://docs.docker.com/compose/how-tos/environment-variables/)
 - [Manual for Secrets in Docker Compose](https://docs.docker.com/compose/how-tos/use-secrets/)
 - [MariaDB Server Documentation](https://mariadb.com/docs/server)
+- [WordPress Administration Handbook](https://developer.wordpress.org/advanced-administration/)

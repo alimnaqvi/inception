@@ -3,8 +3,8 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 DATADIR="/var/lib/mysql"
 
-# if /var/lib/mysql/wordpress-db directory does not exist, this is the first run
-if [ -d ${DATADIR}/${MARIADB_DATABASE} ]; then
+# if /var/lib/mysql/mysql directory does not exist, this is the first run
+if [ -d ${DATADIR}/mysql ]; then
     echo "Not the first run. Skipping initialization of MariaDB database."
 else
     echo "First run detected. Initializing MariaDB database."

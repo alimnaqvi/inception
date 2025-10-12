@@ -9,11 +9,6 @@ COPY conf/my.cnf /etc/mysql/mariadb.conf.d/60-custom.cnf
 
 COPY conf/mdb-initialization.sh /usr/local/bin/
 
-ARG MARIADB_DATABASE
-ARG MARIADB_USER
-ENV MARIADB_DATABASE=${MARIADB_DATABASE}
-ENV MARIADB_USER=${MARIADB_USER}
-
 RUN chmod +x /usr/local/bin/mdb-initialization.sh
 
 ENTRYPOINT ["mdb-initialization.sh"]
