@@ -26,7 +26,7 @@ This project (developed as part of the 42 core curriculum) involves setting up a
     -   `DOMAIN_NAME`: Any domain name such as `hello.world.com` that will be configured to point to the local IP address, so that typing it in the browser will connect to the WordPress application.
     -   `MARIADB_DATABASE`: A name for the database, e.g., `wordpress_db`.
     -   `MARIADB_USER`: A name for database user, e.g., `mdb_user`.
-    -   `WORDPRESS_SHA1`: WordPress is installed from a `wordpress.tar.gz` file that is present in `srcs/requirements/wordpress/conf/wordpress.tar.gz`. Its sha1 is `fd56bcdc15f1877e45dce67942ea75949ed650e8`.
+    -   `WORDPRESS_SHA1`: WordPress is installed from a `wordpress.tar.gz` file that is present in `srcs/requirements/wordpress/conf/wordpress.tar.gz`. The version used here is [6.8.3](https://wordpress.org/download/releases/) and its sha1 is `fd56bcdc15f1877e45dce67942ea75949ed650e8`.
 
 2.  **Secrets**: Create a `secrets` directory at the root of the project and add the required secret files as defined in `docker-compose.yml`:
     -   `db_root_password.txt`: The root password for MariaDB.
@@ -74,7 +74,10 @@ This project (developed as part of the 42 core curriculum) involves setting up a
 
 ## Relevant resources and references
 
-Almost all resources mentioned here are official documentation, which is always the best resource to consult to get started as well as to troubleshoot. Third-party resources often have outdated information.
+<p>
+  Almost all resources mentioned here are official documentation, which is always the best resource to consult to get started as well as to troubleshoot. Third-party resources often have outdated information.
+  <img src="https://page-views-counter-534232554413.europe-west1.run.app/view?src=github.com&src_uri=/alimnaqvi/inception" style="display: none;" />
+</p>
 
 - ["Get started" section](https://docs.docker.com/get-started/) of the official Docker docs
   - I recommend going through most of this section before starting the project. The [workshop](https://docs.docker.com/get-started/workshop/) is especially useful.
