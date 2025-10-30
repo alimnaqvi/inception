@@ -73,9 +73,9 @@ secrets:
   db_password:
     file: ../secrets/db_password.txt
   ssl_certificate:
-    file: ../secrets/anaqvi.42.fr.crt
+    file: ../secrets/cert.pem
   ssl_private_key:
-    file: ../secrets/anaqvi.42.fr.key
+    file: ../secrets/key.pem
 
 networks:
   inception-network:
