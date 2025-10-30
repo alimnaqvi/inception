@@ -21,9 +21,9 @@ clean:
 
 fclean:
 	${DOCKER_COMPOSE} down --volumes --rmi local
-# 	rm -rf ${VOLUMES_LOCATION}
+	rm -rf ${VOLUMES_LOCATION}
 
-re:
+re: fclean all
 
 build:
 	${DOCKER_COMPOSE} ${SRCS_DIR} up --build --detach
