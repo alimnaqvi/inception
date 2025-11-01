@@ -10,8 +10,8 @@ SECRETS_PATHS = $(addprefix ./secrets/, ${SECRET_FILES})
 
 all: up
 
-up: ${SECRETS_PATHS} ${VOLUMES}
-	${DOCKER_COMPOSE} up --build --detach 
+up: ${SECRETS_PATHS} ${VOLUMES} build
+	${DOCKER_COMPOSE} up --detach 
 
 down:
 	${DOCKER_COMPOSE} down
@@ -28,7 +28,7 @@ fclean:
 re: fclean all
 
 build:
-	${DOCKER_COMPOSE} ${SRCS_DIR} up --build --detach
+	${DOCKER_COMPOSE} build
 
 ${SECRETS_PATHS}:
 	@echo "Error: $@ does not exist. Make sure the secrets directory is present and contains all four required secrets." && exit 1
