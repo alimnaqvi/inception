@@ -11,7 +11,7 @@ SECRETS_PATHS = $(addprefix ./secrets/, ${SECRET_FILES})
 all: up
 
 up: ${SECRETS_PATHS} ${VOLUMES}
-	${DOCKER_COMPOSE} up --detach 
+	${DOCKER_COMPOSE} up --build --detach 
 
 down:
 	${DOCKER_COMPOSE} down
@@ -21,7 +21,9 @@ clean:
 
 fclean:
 	${DOCKER_COMPOSE} down --volumes --rmi local
-	rm -rf ${VOLUMES_LOCATION}
+# 	@echo "HINT: fclean requires sudo permission to delete the ${VOLUMES_LOCATION} directory. You might be asked to enter password in the next step"
+	sudo rm -rf ${VOLUMES_LOCATION}
+# 	docker system prune -a -f
 
 re: fclean all
 
