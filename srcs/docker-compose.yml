@@ -15,9 +15,7 @@ services:
       - db_root_password
       - db_password
     volumes:
-      - type: bind
-        source: /home/${INTRA_LOGIN}/data/wordpress-db
-        target: /var/lib/mysql
+      - wordpress-db:/var/lib/mysql
     networks:
       - inception-network
 
@@ -48,12 +46,10 @@ services:
       - wp_admin_password
       - wp_user_password
     volumes:
-      - type: bind
-        source: /home/${INTRA_LOGIN}/data/wordpress-files
-        target: /var/www/html/
+      - wordpress-files:/var/www/html/
     networks:
       - inception-network
-  
+
   nginx:
     depends_on:
       - wordpress
@@ -71,9 +67,7 @@ services:
       - ssl_certificate
       - ssl_private_key
     volumes:
-      - type: bind
-        source: /home/${INTRA_LOGIN}/data/wordpress-files
-        target: /var/www/html/
+      - wordpress-files:/var/www/html/
     networks:
       - inception-network
 
@@ -94,3 +88,17 @@ secrets:
 networks:
   inception-network:
     driver: bridge
+
+volumes:
+  wordpress-db:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/anaqvi/data/wordpress-db'
+  wordpress-files:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/anaqvi/data/wordpress-files'
