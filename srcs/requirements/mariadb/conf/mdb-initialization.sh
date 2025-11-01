@@ -42,6 +42,9 @@ else
     # Create the application database if it doesn't exist
     mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${MARIADB_DATABASE}\`;"
 
+    # Drop anonymous users
+    mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" -e "DELETE FROM mysql.user WHERE user = '';"
+
     # Create the application user and grant privileges
     mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" -e "CREATE USER IF NOT EXISTS \`${MARIADB_USER}\`@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';"
     mariadb -u root -p"${MARIADB_ROOT_PASSWORD}" -e "GRANT ALL PRIVILEGES ON \`${MARIADB_DATABASE}\`.* TO \`${MARIADB_USER}\`@'%';"

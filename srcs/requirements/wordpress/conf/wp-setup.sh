@@ -36,6 +36,9 @@ else
     tar -xzf ${WP_DOWNLOAD} --strip-components=1 --directory ${ROOT_DIR}
     rm ${WP_DOWNLOAD}
 
+    # Ensure proper permissions before creating config
+    chown -R www-data:www-data ${ROOT_DIR}
+
     # Generate WordPress salts
     SALT=$(curl -s https://api.wordpress.org/secret-key/1.1/salt/)
     MARIADB_PASSWORD=$(cat ${MARIADB_PASSWORD_FILE})
@@ -97,6 +100,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once ABSPATH . 'wp-settings.php';
 
 EOWP
+
+    # Wait for the database to be ready
+    # while ! mariadb -h mariadb -u "${MARIADB_USER}" -p"${MARIADB_PASSWORD}" -e "SELECT 1;" >/dev/null 2>&1; do
+    #     echo "Waiting for MariaDB..."
+    #     sleep 1
+    # done
+    # echo "MariaDB is ready."
+
+    # Wait for the database to be ready
+    sleep 10
+
+    MARIADB_PASSWORD=$(cat ${MARIADB_PASSWORD_FILE})
+    WORDPRESS_ADMIN_PASSWORD=$(cat ${WORDPRESS_ADMIN_PASSWORD_FILE})
+    WORDPRESS_USER_PASSWORD=$(cat ${WORDPRESS_USER_PASSWORD_FILE})
+
+    # Install WordPress and create users
+    echo "Installing WordPress and creating users"
+    runuser -u www-data -- wp core install --title="${WORDPRESS_TITLE}" --admin_user=${WORDPRESS_ADMIN_USER} --admin_password=${WORDPRESS_ADMIN_PASSWORD} --admin_email=${WORDPRESS_ADMIN_EMAIL} --path=${ROOT_DIR}
+    runuser -u www-data -- wp user create ${WORDPRESS_USER} ${WORDPRESS_USER_EMAIL} --role=author --user_pass=${WORDPRESS_USER_PASSWORD} --path=${ROOT_DIR}
 
 fi
 
