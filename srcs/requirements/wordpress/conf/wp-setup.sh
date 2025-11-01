@@ -87,7 +87,14 @@ define( 'WP_DEBUG', false );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
+if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    \$_SERVER['HTTPS'] = 'on';
+}
 
+if (isset(\$_SERVER['HTTP_HOST'])) {
+    define('WP_HOME', 'https://' . \$_SERVER['HTTP_HOST']);
+    define('WP_SITEURL', 'https://' . \$_SERVER['HTTP_HOST']);
+}
 
 /* That's all, stop editing! Happy publishing. */
 
@@ -101,15 +108,13 @@ require_once ABSPATH . 'wp-settings.php';
 
 EOWP
 
-    # Wait for the database to be ready
-    # while ! mariadb -h mariadb -u "${MARIADB_USER}" -p"${MARIADB_PASSWORD}" -e "SELECT 1;" >/dev/null 2>&1; do
-    #     echo "Waiting for MariaDB..."
+    # # Wait for the database to be ready
+    # echo "Waiting for MariaDB..."
+    # until runuser -u www-data -- wp db query 'SELECT 1;' --path=${ROOT_DIR} --quiet; do
     #     sleep 1
     # done
     # echo "MariaDB is ready."
-
-    # Wait for the database to be ready
-    sleep 10
+    sleep 5
 
     MARIADB_PASSWORD=$(cat ${MARIADB_PASSWORD_FILE})
     WORDPRESS_ADMIN_PASSWORD=$(cat ${WORDPRESS_ADMIN_PASSWORD_FILE})
@@ -117,7 +122,7 @@ EOWP
 
     # Install WordPress and create users
     echo "Installing WordPress and creating users"
-    runuser -u www-data -- wp core install --title="${WORDPRESS_TITLE}" --admin_user=${WORDPRESS_ADMIN_USER} --admin_password=${WORDPRESS_ADMIN_PASSWORD} --admin_email=${WORDPRESS_ADMIN_EMAIL} --path=${ROOT_DIR}
+    runuser -u www-data -- wp core install --url="${DOMAIN_NAME}" --title="${WORDPRESS_TITLE}" --admin_user=${WORDPRESS_ADMIN_USER} --admin_password=${WORDPRESS_ADMIN_PASSWORD} --admin_email=${WORDPRESS_ADMIN_EMAIL} --path=${ROOT_DIR}
     runuser -u www-data -- wp user create ${WORDPRESS_USER} ${WORDPRESS_USER_EMAIL} --role=author --user_pass=${WORDPRESS_USER_PASSWORD} --path=${ROOT_DIR}
 
 fi
