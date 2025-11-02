@@ -5,6 +5,7 @@ services:
     env_file: ./.env
     build:
       context: ./requirements/mariadb
+    image: mariadb
     restart: on-failure
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -25,6 +26,7 @@ services:
     env_file: ./.env
     build:
       context: ./requirements/wordpress
+    image: wordpress
     restart: on-failure
     environment:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
@@ -56,6 +58,7 @@ services:
     env_file: ./.env
     build:
       context: ./requirements/nginx
+    image: nginx
     ports:
       - "127.0.0.1:443:443"
     restart: on-failure
