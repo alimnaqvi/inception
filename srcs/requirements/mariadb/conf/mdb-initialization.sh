@@ -3,8 +3,11 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 DATADIR="/var/lib/mysql"
 
+# Ensure the mysql user owns the data directory
+chown -R mysql:mysql "${DATADIR}"
+
 # if /var/lib/mysql/mysql directory does not exist, this is the first run
-if [ -d ${DATADIR}/mysql ]; then
+if [ -d ${DATADIR}/${MARIADB_DATABASE} ]; then
     echo "Not the first run. Skipping initialization of MariaDB database."
 else
     echo "First run detected. Initializing MariaDB database."
