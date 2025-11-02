@@ -109,12 +109,11 @@ require_once ABSPATH . 'wp-settings.php';
 EOWP
 
     # # Wait for the database to be ready
-    # echo "Waiting for MariaDB..."
-    # until runuser -u www-data -- wp db query 'SELECT 1;' --path=${ROOT_DIR} --quiet; do
-    #     sleep 1
-    # done
-    # echo "MariaDB is ready."
-    sleep 5
+    until runuser -u www-data -- mariadb -h ${DB_SERVICE_NAME} -u ${MARIADB_USER} -p${MARIADB_PASSWORD} -e 'SELECT 1;' &>/dev/null; do
+        echo "Waiting for MariaDB..."
+        sleep 1
+    done
+    echo "MariaDB is ready."
 
     MARIADB_PASSWORD=$(cat ${MARIADB_PASSWORD_FILE})
     WORDPRESS_ADMIN_PASSWORD=$(cat ${WORDPRESS_ADMIN_PASSWORD_FILE})
